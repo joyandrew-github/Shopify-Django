@@ -1,0 +1,215 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}
+   Shopkart | Online Shopping
+{% endblock title %}
+{% block content %}
+<style>
+    body {
+        background: url('https://source.unsplash.com/1600x900/?shopping,store') no-repeat center center fixed;
+        background-size: cover;
+    }
+
+    /* Style the product details section */
+    section.bg-light {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style the breadcrumb */
+    .breadcrumb {
+        background: transparent;
+    }
+
+    /* Style the product image */
+    .pic-box img {
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style the hot label */
+    .hot {
+        background-color: #ff6b6b;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 15px;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+
+    /* Style the buttons */
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        border-radius: 10px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        border-radius: 10px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #c82333;
+    }
+
+    /* Style the quantity input group */
+    .input-group-text {
+        cursor: pointer;
+    }
+
+    /* Add custom styles for text */
+    .text-success {
+        color: #28a745 !important;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    .text-primary {
+        color: #007bff !important;
+    }
+</style>
+
+<section class="bg-light py-4 my-5" style="min-height:600px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-4 my-3 pic-box position-relative">
+                {% if products.trending %}
+                <div class="hot">Hot</div>
+                {% endif %}
+                <img src="{{ products.product_image.url }}" class="card-img-top" alt="{{ products }}">
+            </div>
+            <div class="col-8">
+                <h4 class="mb-3">{{ products }} Details</h4>
+                <hr style="border-color:#b8bfc2;">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'collections' %}">Collections</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ products }}</li>
+                    </ol>
+                </nav>
+                {% include 'shop/inc/message.html' %}
+                <h5 class="text-success">{{ products | upper }}</h5>
+                <p>{{ products.vendor }}</p>
+                <p>{{ products.description }}</p>
+                <h6 class="my-2 text-danger">Current Price: Rs.<s>{{ products.original_price }}</s></h6>
+                <h6 class="my-2 text-primary">Offer Price: {{ products.selling_price }}</h6>
+                <div class="my-3">
+                    {% if products.quantity > 0 %}
+                    <input type="hidden" value="{{ products.id }}" id="pid">
+                    {% csrf_token %}
+                    <p>
+                        <div class="input-group" style="width:150px;">
+                            <button class="input-group-text bg-success text-light" id="btnMinus"><i
+                                    class="fa fa-minus"></i></button>
+                            <input type="text" name="qty" id="txtQty" value="1"
+                                class="form-control text-center">
+                            <button class="input-group-text bg-success text-light" id="btnPlus"><i
+                                    class="fa fa-plus"></i></button>
+                        </div>
+                    </p>
+                    <button class="btn btn-primary" id="btnCart"><i class="fa fa-shopping-cart"></i> Add to
+                        Cart</button>
+                    {% else %}
+                    <button class="btn btn-primary"><i class="fa fa-minus"></i> Out of Stock</button>
+                    {% endif %}
+                    <button class="btn btn-danger" id="btnFavorite"><i class="fa fa-heart"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      const btnPlus = document.getElementById("btnPlus");
+      const btnMinus = document.getElementById("btnMinus");
+      const txtQty = document.getElementById("txtQty");
+      const pid = document.getElementById("pid");
+      const btnCart = document.getElementById("btnCart");
+      const btnFavorite = document.getElementById("btnFavorite");
+
+      btnPlus.addEventListener("click", function() {
+        let qty = parseInt(txtQty.value, 10);
+        qty = isNaN(qty) ? 0 : qty;
+        if (qty < 10) {
+          qty++;
+          txtQty.value = qty;
+        }
+      });
+
+      btnMinus.addEventListener("click", function() {
+        let qty = parseInt(txtQty.value, 10);
+        qty = isNaN(qty) ? 0 : qty;
+        if (qty > 1) {
+          qty--;
+          txtQty.value = qty;
+        }
+      });
+
+      btnCart.addEventListener("click", function() {
+        let qty = parseInt(txtQty.value, 10);
+        qty = isNaN(qty) ? 0 : qty;
+
+        if (qty > 0) {
+          let postObj = {
+            'product_qty': qty,
+            'pid': pid.value
+          };
+          fetch("/addtocart", {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'Accept': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest',
+              'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify(postObj)
+          }).then(response => {
+            return response.json();
+          }).then(data => {
+            alert(data['status']);
+          });
+
+        } else {
+          alert("Please Enter The Quantity");
+        }
+      });
+
+      btnFavorite.addEventListener("click", function() {
+        let postObj = {
+          'pid': pid.value
+        };
+        fetch("/fav", {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token }}',
+          },
+          body: JSON.stringify(postObj)
+        }).then(response => {
+          return response.json();
+        }).then(data => {
+          alert(data['status']);
+        });
+      });
+    });
+</script>
+
+{% endblock %}

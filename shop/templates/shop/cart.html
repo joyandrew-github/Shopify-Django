@@ -1,0 +1,127 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}
+   Cart | Shopkart
+{% endblock title %}
+{% block content %}
+<style>
+  .table-container {
+    max-width: 1000px;
+    margin: auto;
+  }
+
+  .table-bordered {
+    border: 2px solid #343a40;
+  }
+
+  .table-bordered th,
+  .table-bordered td {
+    border: 1px solid #454d55;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .table th {
+    background-color: #343a40;
+    color: #fff;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  .table tbody td img {
+    border-radius: 5px;
+    max-height: 50px;
+    width: auto;
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
+
+  .btn-danger .fa {
+    margin-right: 5px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #343a40;
+  }
+
+  .hr-divider {
+    border-color: #b8bfc2;
+    margin-bottom: 20px;
+  }
+
+  .total-amount {
+    font-weight: bold;
+    color: #343a40;
+  }
+
+  .total-amount-value {
+    font-weight: bold;
+    color: #28a745;
+  }
+</style>
+
+<div class="container">
+    <section class="bg-light py-4 my-5" style="min-height:600px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h4 class="mb-3">Cart List</h4>
+                    <hr class="hr-divider">
+                </div>
+            </div>
+            <div class="row">
+                <div class="table-container">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Product Name</th>
+                                <th>Unit</th>
+                                <th>Quantity</th>
+                                <th>Amount</th>
+                                <th>Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart %}
+                            <tr>
+                                <td><img src="{{ item.product.product_image.url }}" height="50px" alt="{{ item.product.name }}"></td>
+                                <td>{{ item.product.name }}</td>
+                                <td>{{ item.product.selling_price }}</td>
+                                <td>{{ item.product_qty }}</td>
+                                <td class="amt">{{ item.total_cost }}</td>
+                                <td><a href="{% url 'remove_cart' item.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are You Sure? to Remove')"><i class="fa fa-trash"></i> Remove</a></td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td colspan="4"></td>
+                                <td class="total-amount">Total Amount</td>
+                                <td class="total-amount-value" id="net">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    const nodes = document.querySelectorAll('.amt');
+    const arr = Array.from(nodes);
+    const res = arr.reduce((acc, curr) => {
+        return acc += parseFloat(curr.textContent) || 0;
+    }, 0);
+    document.getElementById("net").innerHTML = "Rs : " + res.toFixed(2);
+</script>
+{% endblock content %}

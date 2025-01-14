@@ -1,0 +1,106 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}
+Registration | Online Shopping
+{% endblock title %}
+{% block content %}
+<style>
+    .register-container {
+        margin-top: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 70px);
+    }
+    .register-box {
+        background: #14115B; /* Changed background color */
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 200%;
+        max-width: 700px; /* Extended width */
+    }
+    .register-box h4 {
+        color: #fff;
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .register-box .form-label {
+        color: #fff;
+    }
+    .register-box .form-control {
+        border-radius: 10px;
+    }
+    .register-box .btn-primary {
+        background-color: #ff6b6b;
+        border-color: #ff6b6b;
+        border-radius: 10px;
+        transition: background-color 0.3s ease;
+    }
+    .register-box .btn-primary:hover {
+        background-color: #ff4757;
+        border-color: #ff4757;
+    }
+    .register-box .text-danger {
+        font-size: 0.9rem;
+    }
+    .register-box a {
+        color: #fff;
+        text-decoration: underline;
+    }
+    .register-box a:hover {
+        color: #ffdd57;
+    }
+    .register-box .already-user {
+        color: #fff;
+        text-align: center;
+    }
+</style>
+
+<div class="container register-container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="register-box">
+                <h4 class="mb-3">Register Page</h4>
+                <hr style="border-color: rgba(255, 255, 255, 0.7);">
+                {% include 'shop/inc/message.html' %}
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="username" class="form-label">User Name</label>
+                        {{ form.username }}
+                        {% if form.errors.username %}
+                        <label class="text-danger">{{ form.errors.username }}</label>
+                        {% endif %}
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="form-label">E-mail</label>
+                        {{ form.email }}
+                        {% if form.errors.email %}
+                        <label class="text-danger">{{ form.errors.email }}</label>
+                        {% endif %}
+                    </div>
+                    <div class="mb-4">
+                        <label for="password1" class="form-label">Password</label>
+                        {{ form.password1 }}
+                        {% if form.errors.password1 %}
+                        <label class="text-danger">{{ form.errors.password1 }}</label>
+                        {% endif %}
+                    </div>
+                    <div class="mb-4">
+                        <label for="password2" class="form-label">Confirm Password</label>
+                        {{ form.password2 }}
+                        {% if form.errors.password2 %}
+                        <label class="text-danger">{{ form.errors.password2 }}</label>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </form>
+                <p class="my-2 text-center already-user">Already a user? <a href="{% url 'login' %}">Login Now</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

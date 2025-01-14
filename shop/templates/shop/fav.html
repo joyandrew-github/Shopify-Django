@@ -1,0 +1,89 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}
+  Registration | ShopKart
+{% endblock title %}
+{% block content %}
+<style>
+  .table-container {
+    max-width: 800px;
+    margin: auto;
+  }
+
+  .table thead th {
+    background-color: #343a40;
+    color: #fff;
+    border-color: #454d55;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  .table tbody td img {
+    border-radius: 5px;
+    max-height: 50px;  /* Adjust the max-height */
+    width: auto;       /* Maintain aspect ratio */
+  }
+  
+  .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
+  
+  .btn-danger .fa {
+    margin-right: 5px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #343a40;
+  }
+
+  .hr-divider {
+    border-color: #b8bfc2;
+    margin-bottom: 20px;
+  }
+</style>
+
+  <section class="bg-light py-4 my-5" style="min-height:600px;">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h4 class="mb-3">Favourite Item</h4>
+          <hr style="border-color:#b8bfc2;">
+        </div>
+      
+        <div class="col-12">
+          <div class="table-container">
+            <table class="table table-hover">
+              <thead class="thead-dark">
+                <tr>
+                  <th>Image</th>
+                  <th>Product Name</th>
+                  <th>Unit</th>
+                  <th>Remove</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in fav %}
+                <tr>
+                  <td><img src="{{item.product.product_image.url}}" height="50px" alt="{{item.product.name}}" class="img-thumbnail"></td>
+                  <td>{{item.product.name}}</td>
+                  <td>{{item.product.selling_price | stringformat:'d'}}</td>
+                  <td><a href="{% url 'remove_fav' item.id %}" onclick="return confirm('Are you sure? to Remove')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Remove</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock content %}
