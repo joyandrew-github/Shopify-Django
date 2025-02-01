@@ -2,14 +2,14 @@
     "version": 2,
     "builds": [
       {
-        "src": "Eccomerce/wsgi.py",
+        "src": "shopkart/wsgi.py", 
         "use": "@vercel/python",
         "config": { "maxLambdaSize": "50mb" }
       }
     ],
     "routes": [
       { "src": "/static/(.*)", "dest": "/static/$1" },
-      { "src": "/(.*)", "dest": "project_name/wsgi.py" }
+      { "src": "/(.*)", "dest": "shopkart/wsgi.py" }
     ]
   }
   
